@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/CRI.iml" filepath="$PROJECT_DIR$/.idea/CRI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../colour-fork/.idea/colour-fork.iml" filepath="$PROJECT_DIR$/../colour-fork/.idea/colour-fork.iml" />
     </modules>
   </component>
 </project>
