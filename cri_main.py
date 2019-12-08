@@ -1,44 +1,50 @@
-import numpy as np
+# PACKAGES
+# =====================================================================
 
-# Subpackages have to be imported explicitly
-import scipy
-import scipy.interpolate as interpolate
+# Plotting
+# =====================================================================
+import matplotlib # For advanced plotting
+import matplotlib.pyplot as plt # (subpackage has to be imported explicitly)
+import tikzplotlib # For export of figures to LaTeX pgfplot
 
+# Data Science
+# =====================================================================
 import math
-
+import numpy as np
 import pandas as pd
+import scipy
+import scipy.interpolate as interpolate # (subpackage has to be imported explicitly)
 
-import matplotlib
-import matplotlib.pyplot as plt
+# File Handling
+# =====================================================================
+import os # For I/O and path handling
+import pathlib # For advanced path handling
+import csv # For CSV file import and manipulation
 
-import os
-import pathlib
-from pathlib import Path
-
-import csv
-
-# Subpackages have to be imported explicitly
+# Colour Science
+# =====================================================================
 import colour
-import colour.plotting
+import colour.plotting # (subpackage has to be imported explicitly)
 
 # =====================================================================
+# =====================================================================
 # SPD to CRI Script
-# (C) Michael Weinold 2019-2020
+# Michael Weinold 2019-2020
 # University of Cambridge
+# =====================================================================
 # =====================================================================
 
 # Get correct file paths for import and export
 # ============================================
-currentpath = os.path.dirname(os.path.abspath(__file__))
-input_subfolder = "Data/Input/spd_in.csv"
-inputpath = os.path.join(currentpath, input_subfolder)
-print(inputpath)
+indir = os.path.join(os.getcwd(), "data/input")
+infile = os.path.join(indir, "/spd_in.csv")
+print('Attempting to read CSV file from path:', infile)
 
 # SPD data import from csv file
 # =============================
 
 try:
-    fin = open(inputpath, 'r')
+    fin = open(infile, 'r')
 except:
     print('CSV file could not be opened.')
 else:
@@ -48,8 +54,8 @@ finally:
 
 # Set custom CSV dialect
 csv.register_dialect('WebPlotDigitizer-4.2',
-delimiter = ',',
-skipinitialspace=True)
+                     delimiter = ',',
+                     skipinitialspace=True)
 
 # Attempt to determine the correct csv dialect
 # Note that reading less than the entire file may lead to incorrect dialect detection.
@@ -70,25 +76,11 @@ finally:
     fin.seek(0)
 
 # Get spline and new x-axis points
-# Note that the colour science module employs its own interpolation of data points
 # ================================
 
-# Initialize empty data types
-spd_dict_raw = dict()
-X = list()
-Y = list()
-
-# Fill empty data types
-for row in csvreader:
-#    print('x=', row[0])
-#    print('y=', row[1])
-    X.append(row[0])
-    Y.append(row[1])
+# Reads csv data to dictionary
+spd_raw = {row[0]: row[1] for row in csvreader}
 fin.seek(0)
-
-# Sort lists, just in case
-X.sort()
-Y.sort()
 
 #Set new x-axis points
 x_max = X[-1]
