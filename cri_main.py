@@ -18,7 +18,6 @@ import scipy.interpolate as interpolate # (subpackage has to be imported explici
 # File Handling
 # =====================================================================
 import os # For I/O and path handling
-import pathlib # For advanced path handling
 import csv # For CSV file import and manipulation
 
 # Colour Science
@@ -34,11 +33,13 @@ import colour.plotting # (subpackage has to be imported explicitly)
 # =====================================================================
 # =====================================================================
 
-# Get correct file paths for import and export
-# ============================================
+# Read input folder and list all relevant files
+# =============================================
 
-infile = os.path.join(os.getcwd(), "data/input/spd_in.csv")
-print('Attempting to read CSV file from path:', infile)
+indir = os.path.join(os.getcwd(), "data/input")
+inlist = os.listdir(indir)
+
+print('Files in input directory:', inlist), print()
 
 # SPD data import from csv file
 # =============================
@@ -55,31 +56,105 @@ def dialect_detector():
                              delimiter=',',
                              skipinitialspace=True)
         autodialect = 'WebPlotDigitizer-4.2'
-        print('CSV-file dialect detection failed. Falling back to custom >>WebPlotDigitizer-4.2<< dialect.')
+        print('CSV-file dialect detection failed, falling back to >> WebPlotDigitizer-4.2 << dialect')
     return autodialect
 
-# Checks if reader function is getting data
-def guard_output():
-    if (len(list(csvreader)) == 0):
-        print('Warning: csv.reader produces no output!')
-    else
-        print('CSV detection and reading attempt complete.')
-    finally
-        fin.seek(0)
+# Sets new x-axis data point intervall
+#def intervall_finder(X_list, step_size):
+#
+#    x_min = X_list.min()
+#    x_max = X_list.max()
+#
+#    #Convert float values to integers
+#    x_start = int(math.ceil(x_min))
+#    x_stop = int(math.floor(x_max))
+#
+#    print('x_min=', x_min, 'x_max=', x_max)
+#    print('x_start=', x_start, 'x_stop=', x_stop)
+#
+#    X_new = list()
+#    for i in range(x_start, x_stop):
+#        X_new.append(i)
+#
+#    return X_new
 
-with open(infile, 'r') as fin:
-    csvreader = csv.reader(fin, dialect=dialect_detector(), quoting=csv.QUOTE_NONNUMERIC)
-    guard_output()
-    spd_raw = {row[0]: row[1] for row in csvreader}
-
-# Transfer data to pandas DataFrame
-# =================================
-
-spd_print = pd.DataFrame.from_dict(list(spd_raw.items()))
-spd_print.columns = ['wavelength', 'intensity']
-print('Spectral Power Distribution extracted from CSV file: \n', spd_print)
+# Calculates spline and outputs data according to new axis point intervall
 
 
+#    # Tells the sorted function to sort by the x-values
+#    def getkey (element):
+#        return element[0]
+#    sorted(zip(X,Y), key=getkey)
+
+def spline_calculator(X, Y, X_spectrum):
+
+    global spd_new
+
+    spd_spline = interpolate.splrep(X, Y, k=3)
+    spd_new = interpolate.splev(X_spectrum, spd_spline)
+
+
+# Plots old vs new data points for visula inspection
+#def spline_inspector():
+#    plt.scatter()
+#    plt.plot()
+
+# Custom exceptions
+# =================
+
+class exception_csvreader(Exception):
+    pass
+class exception_cri_value(Exception):
+    pass
+
+# Main loop to read all CSV files
+# =================================™
+
+# Prepares empty dataframe with correct index
+X_spectrum = [i for i in range(380, 740, 1)] # New x-axis points in the visible spectrum
+output_master = pd.DataFrame(index=X_spectrum, columns=[infile])
+
+for infile in inlist:
+
+    print('Reading file: >>', infile, '<<')
+
+    abs_infile = os.path.join(indir, infile)
+
+    try:
+
+        with open(abs_infile, 'r') as fin:
+
+            csvreader = csv.reader(fin,
+                                   dialect=dialect_detector(),
+                                   quoting=csv.QUOTE_NONNUMERIC)
+
+            # Checks for csvreader errors
+            if len(list(csvreader)) == 0:
+                inlist.remove(infile)
+                raise exception_csvreader
+            fin.seek(0)
+
+            print('Successfully read file >>', infile, '<<'), print()
+
+            # Writes CSV file columns to lists
+            X = []
+            Y = []
+
+            for row in csvreader:
+                X.append(row[0])
+                Y.append(row[1])
+
+            X_sorted = [x for x, _ in sorted(zip(X, Y))]
+            Y_sorted = [y for _, y in sorted(zip(X, Y))]
+
+            # Calculates interpolated SPD
+            spline_calculator(X_sorted,Y_sorted, X_spectrum)
+
+            # Appends interpolated SPD to master sheet
+            output_master[infile] = spd_new
+
+    except exception_csvreader:
+        print('Warning: Skipped file because csv.reader produces no output for  >>', infile, '<<'), print()
 
 # Test colour science module and functions
 # ========================================
@@ -95,10 +170,10 @@ print('Spectral Power Distribution extracted from CSV file: \n', spd_print)
 # Perform colorimetric calculations
 # =================================
 
-#spd = colour.SpectralDistribution(spd_dict_new)
-#colour.plotting.plot_single_sd(spd)
-#cri = colour.colour_rendering_index(spd)
-#print('Calculated CRI from SPD=', cri)
+spd = colour.SpectralDistribution(spd_dict_new)
+colour.plotting.plot_single_sd(spd)
+cri = colour.colour_rendering_index(spd)
+print('Calculated CRI from SPD=', cri)
 
 # Output
 # ======
