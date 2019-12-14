@@ -13,6 +13,6 @@ The CRI associated with a given SPD of an LED luminaire can be calculated using 
 
 The effect of a certain CRI value associated with a given SPD of an LED luminaire can be simulated  using the [`luxpy.toolboxes.hypspcim.hyperspectral_img_simulator`](https://ksmet1977.github.io/luxpy/build/html/_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html) module of the [`luxpy`](https://ksmet1977.github.io/luxpy/build/html/index.html) package. 
 
-Michael Weinold
-University of Cambridge
+Michael Weinold \
+University of Cambridge \
 2019-2020
