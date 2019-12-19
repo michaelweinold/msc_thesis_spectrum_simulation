@@ -13,6 +13,20 @@ The CRI associated with a given SPD of an LED luminaire can be calculated using 
 
 The effect of a certain CRI value associated with a given SPD of an LED luminaire can be simulated  using the [`luxpy.toolboxes.hypspcim.hyperspectral_img_simulator`](https://ksmet1977.github.io/luxpy/build/html/_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html) module of the [`luxpy`](https://ksmet1977.github.io/luxpy/build/html/index.html) package. 
 
+1. Spectral data is loaded from CSV files into Pandas DataFrames
+2. Negative values are set to zero
+3. Values are sorted by wavelength
+4. DataFrames are written to a dictionary
+
+   `{'csv_name':DataFrame,…}`
+
+#### Caveats
+
+- Check for large discontinuities in the provided SPD to avoid errors like `cri = nan`
+- The `luxpy.spd()` function does not return an array of correct dimensions
+- Difference in CRI definitions between colour-science and luxpy
+
+
 Michael Weinold \
 University of Cambridge \
 2019-2020

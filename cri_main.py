@@ -1,29 +1,22 @@
-# PACKAGES
-# =====================================================================
-
 # Plotting
-# =====================================================================
-import matplotlib # For advanced plotting
+import matplotlib   # For advanced plotting
 import matplotlib.pyplot as plt # (subpackage has to be imported explicitly)
-import tikzplotlib # For export of figures to LaTeX pgfplot
 
 # Data Science
-# =====================================================================
-import math
 import numpy as np
 import pandas as pd
-import scipy
-import scipy.interpolate as interpolate # (subpackage has to be imported explicitly)
 
 # File Handling
-# =====================================================================
-import os # For I/O and path handling
-import csv # For CSV file import and manipulation
+import os   # For I/O and path handling
+import os.path  # For walking through directories
 
 # Colour Science
-# =====================================================================
 import colour
-import colour.plotting # (subpackage has to be imported explicitly)
+import colour.plotting
+import luxpy
+
+# Plotting
+from matplotlib import pyplot as plt
 
 # =====================================================================
 # =====================================================================
@@ -33,153 +26,82 @@ import colour.plotting # (subpackage has to be imported explicitly)
 # =====================================================================
 # =====================================================================
 
+
 # Read input folder and list all relevant files
-# =============================================
+# =====================================================================
 
-indir = os.path.join(os.getcwd(), "data/input")
-inlist = os.listdir(indir)
+cwd = os.getcwd()
+inpath = '/data/input/'
+outpath = '/data/output/'
 
-print('Files in input directory:', inlist), print()
+csvdict = {}
 
-# SPD data import from csv file
-# =============================
+for dirpath, dirname, filenames in os.walk(cwd+inpath):
 
-# Attempts to determine the correct csv dialect
-def dialect_detector():
-    try:
-        autodialect = csv.Sniffer().sniff(fin.read())  # Reads entire file to determine csv dialect
-        fin.seek(0)  # Resets the file's object position to the beginning
-        print('CSV-file dialect successfully detected.')
-    except:
-        # Set custom CSV dialect
-        csv.register_dialect('WebPlotDigitizer-4.2',
-                             delimiter=',',
-                             skipinitialspace=True)
-        autodialect = 'WebPlotDigitizer-4.2'
-        print('CSV-file dialect detection failed, falling back to >> WebPlotDigitizer-4.2 << dialect')
-    return autodialect
+    for file in filenames:
 
-# Sets new x-axis data point intervall
-#def intervall_finder(X_list, step_size):
-#
-#    x_min = X_list.min()
-#    x_max = X_list.max()
-#
-#    #Convert float values to integers
-#    x_start = int(math.ceil(x_min))
-#    x_stop = int(math.floor(x_max))
-#
-#    print('x_min=', x_min, 'x_max=', x_max)
-#    print('x_start=', x_start, 'x_stop=', x_stop)
-#
-#    X_new = list()
-#    for i in range(x_start, x_stop):
-#        X_new.append(i)
-#
-#    return X_new
+        # Skips hidden files like ".DStore"
+        if file[0][0] == '.':
+            continue
 
-# Calculates spline and outputs data according to new axis point intervall
+        print(file)
+
+        try:
+            # Reads all files in the input folder
+            dataframe = pd.read_csv(cwd+inpath+file,
+                                    header=None,
+                                    names=['wavelength', 'intensity'])
+
+            # Replaces negative avlues with 0
+            dataframe[dataframe < 0] = 0
+
+            # Sorts values by wavelength overwriting the dataframe
+            pd.DataFrame.sort_values(dataframe,
+                                     by='wavelength',
+                                     inplace=True)
+
+        except TypeError:
+            print('Error reading file >>', file, '<<. Moving on.'), print()
+            continue
+
+        # Appends dataframe to a dictionary
+        csvdict.update({file: dataframe})
 
 
-#    # Tells the sorted function to sort by the x-values
-#    def getkey (element):
-#        return element[0]
-#    sorted(zip(X,Y), key=getkey)
-
-def spline_calculator(X, Y, X_spectrum):
-
-    global spd_new
-
-    spd_spline = interpolate.splrep(X, Y, k=3)
-    spd_new = interpolate.splev(X_spectrum, spd_spline)
+# CRI calculation with LuxPy package
+# =====================================================================
 
 
-# Plots old vs new data points for visula inspection
-#def spline_inspector():
-#    plt.scatter()
-#    plt.plot()
+'''
+cridict = {}
 
-# Custom exceptions
-# =================
+for key in csvdict:
+    spd = np.ndarray.transpose( csvdict[key].to_numpy() )
+    cri = luxpy.color.cri.spd_to_cri(spd)
+    print('CRI=', cri[0][0], 'for', key)
+#    cridict[key] = luxpy.color.cri.spd_to_cri(spd)
 
-class exception_csvreader(Exception):
-    pass
-class exception_cri_value(Exception):
-    pass
+#print(cridict)
 
-# Main loop to read all CSV files
-# =================================™
 
-# Prepares empty dataframe with correct index
-X_spectrum = [i for i in range(380, 740, 1)] # New x-axis points in the visible spectrum
-output_master = pd.DataFrame(index=X_spectrum, columns=[infile])
 
-for infile in inlist:
+def wavelength_extender(array):
+    wl_start = 400
+    wl_end = 800
 
-    print('Reading file: >>', infile, '<<')
+    wl_max = int(np.amax(array[0,:],axis=None))
+    wl_min = int(np.amin(array[0,:],axis=None))
 
-    abs_infile = os.path.join(indir, infile)
 
-#TODO Implement using pd.csv_reader
+    for i in range(wl_end - wl_max):
+        array = np.append(array, [i+wl_max, 0], axis=0)
+        
+'''
 
-    try:
+# CRI calculation with colour-science package
+# =====================================================================
 
-        with open(abs_infile, 'r') as fin:
+spd_dict = dict(zip(spd_dataframe['wavelength'],spd_dataframe['intensity']))
 
-            csvreader = csv.reader(fin,
-                                   dialect=dialect_detector(),
-                                   quoting=csv.QUOTE_NONNUMERIC)
-
-            # Checks for csvreader errors
-            if len(list(csvreader)) == 0:
-                inlist.remove(infile)
-                raise exception_csvreader
-            fin.seek(0)
-
-            print('Successfully read file >>', infile, '<<'), print()
-
-            # Writes CSV file columns to lists
-            X = []
-            Y = []
-
-            for row in csvreader:
-                X.append(row[0])
-                Y.append(row[1])
-
-            X_sorted = [x for x, _ in sorted(zip(X, Y))]
-            Y_sorted = [y for _, y in sorted(zip(X, Y))]
-
-            # Calculates interpolated SPD
-            spline_calculator(X_sorted,Y_sorted, X_spectrum)
-
-            # Appends interpolated SPD to master sheet
-            output_master[infile] = spd_new
-
-    except exception_csvreader:
-        print('Warning: Skipped file because csv.reader produces no output for  >>', infile, '<<'), print()
-
-# Test colour science module and functions
-# ========================================
-#
-# from sample_data import sample_spd_data
-# sample_spd = colour.SpectralDistribution(sample_spd_data)
-#
-# colour.plotting.plot_single_sd(sample_spd)
-#
-# sample_cri = colour.colour_rendering_index(sample_spd)
-# print('Sample CRI=', sample_cri)
-
-# Perform colorimetric calculations
-# =================================
-
-spd = colour.SpectralDistribution(spd_dict_new)
-colour.plotting.plot_single_sd(spd)
+spd = colour.SpectralDistribution(spd_dict)
 cri = colour.colour_rendering_index(spd)
-print('Calculated CRI from SPD=', cri)
-
-# Output
-# ======
-
-#fout = open('cri_data.csv', 'w')
-#fieldnames = ['year', 'product', 'cri']
-#csvwriter = csv.DictWriter(csvfile, fieldnames=fieldnames)
