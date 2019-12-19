@@ -120,6 +120,8 @@ for infile in inlist:
 
     abs_infile = os.path.join(indir, infile)
 
+#TODO Implement using pd.csv_reader
+
     try:
 
         with open(abs_infile, 'r') as fin:
