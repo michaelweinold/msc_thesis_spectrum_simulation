@@ -31,12 +31,16 @@ from matplotlib import pyplot as plt
 # =====================================================================
 
 cwd = os.getcwd()
+intestpath = '/data/input/test/'
 inpath = '/data/input/'
 outpath = '/data/output/'
 
+# File input
+# =====================================================================
+
 csvdict = {}
 
-for dirpath, dirname, filenames in os.walk(cwd+inpath):
+for dirpath, dirname, filenames in os.walk(cwd+intestpath):
 
     for file in filenames:
 
@@ -48,7 +52,7 @@ for dirpath, dirname, filenames in os.walk(cwd+inpath):
 
         try:
             # Reads all files in the input folder
-            dataframe = pd.read_csv(cwd+inpath+file,
+            dataframe = pd.read_csv(cwd+intestpath+file,
                                     header=None,
                                     names=['wavelength', 'intensity'])
 
@@ -60,6 +64,12 @@ for dirpath, dirname, filenames in os.walk(cwd+inpath):
                                      by='wavelength',
                                      inplace=True)
 
+            # Resets the index, just in case
+            pd.DataFrame.reset_index(dataframe,
+                                     drop=True,
+                                     inplace=True)
+
+
         except TypeError:
             print('Error reading file >>', file, '<<. Moving on.'), print()
             continue
@@ -67,41 +77,58 @@ for dirpath, dirname, filenames in os.walk(cwd+inpath):
         # Appends dataframe to a dictionary
         csvdict.update({file: dataframe})
 
+# File postprocessing
+# =====================================================================
+
+# Checks for discontinuities in the SPD and shifts all values towards x-axis if required
+for key in csvdict:
+    y_beg = csvdict[key]['intensity'].iloc[0]
+    y_end = csvdict[key]['intensity'].iloc[-1]
+    y_max = pd.DataFrame.max(csvdict[key]['intensity'])
+
+    beg_diff = ( y_beg / ( y_max / 100 ) )
+    end_diff = ( y_end / ( y_max / 100 ) )
+
+    if (beg_diff or end_diff) < 0.75:
+        print('File >>', key, '<< discontinuity at start and end of values:')
+        print('y_start=', y_beg, 'y_difference_start=', beg_diff, '%')
+        print('y_end=', y_end, 'y_difference_end=', end_diff, '%'), print()
+    else:
+        print('Warning: Large discontinuity! Shifting values towards x-axis.')
+        if y_beg < y_end:
+            csvdict[key]['intensity'] = csvdict[key]['intensity'].apply(lambda y: y - y_beg)
+        if y_beg > y_end:
+            csvdict[key]['intensity'] = csvdict[key]['intensity'].apply(lambda y: y - y_end)
 
 # CRI calculation with LuxPy package
 # =====================================================================
 
+spd = np.ndarray.transpose( csvdict['spd_test_red.csv'].to_numpy() )
+cri = luxpy.color.cri.spd_to_cri(spd)
+print('CRI=', cri[0][0], 'for', 'spd_test_red.csv')
 
-'''
+spd = np.ndarray.transpose( csvdict['spd_test_white.csv'].to_numpy() )
+cri = luxpy.color.cri.spd_to_cri(spd)
+print('CRI=', cri[0][0], 'for', 'spd_test_white.csv')
+
+spd = np.ndarray.transpose( csvdict['spd_test_red.csv'].to_numpy() )
+cri = luxpy.color.cri.spd_to_cri(spd)
+print('CRI=', cri[0][0], 'for', 'spd_test_red.csv')
+
 cridict = {}
 
 for key in csvdict:
     spd = np.ndarray.transpose( csvdict[key].to_numpy() )
     cri = luxpy.color.cri.spd_to_cri(spd)
     print('CRI=', cri[0][0], 'for', key)
-#    cridict[key] = luxpy.color.cri.spd_to_cri(spd)
+    cridict[key] = luxpy.color.cri.spd_to_cri(spd)[0][0]
 
-#print(cridict)
-
-
-
-def wavelength_extender(array):
-    wl_start = 400
-    wl_end = 800
-
-    wl_max = int(np.amax(array[0,:],axis=None))
-    wl_min = int(np.amin(array[0,:],axis=None))
-
-
-    for i in range(wl_end - wl_max):
-        array = np.append(array, [i+wl_max, 0], axis=0)
-        
-'''
+print(cridict)
 
 # CRI calculation with colour-science package
 # =====================================================================
 
-spd_dict = dict(zip(spd_dataframe['wavelength'],spd_dataframe['intensity']))
+#spd_dict = dict(zip(spd_dataframe['wavelength'],spd_dataframe['intensity']))
 
-spd = colour.SpectralDistribution(spd_dict)
-cri = colour.colour_rendering_index(spd)
+#spd = colour.SpectralDistribution(spd_dict)
+#cri = colour.colour_rendering_index(spd)
