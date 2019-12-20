@@ -124,3 +124,4 @@ dmypy.json
 .gitignore
 .idea/webResources.xml
 Data/.DS_Store
+Data/Output/

@@ -103,32 +103,28 @@ for key in csvdict:
 # CRI calculation with LuxPy package
 # =====================================================================
 
-spd = np.ndarray.transpose( csvdict['spd_test_red.csv'].to_numpy() )
-cri = luxpy.color.cri.spd_to_cri(spd)
-print('CRI=', cri[0][0], 'for', 'spd_test_red.csv')
-
-spd = np.ndarray.transpose( csvdict['spd_test_white.csv'].to_numpy() )
-cri = luxpy.color.cri.spd_to_cri(spd)
-print('CRI=', cri[0][0], 'for', 'spd_test_white.csv')
-
-spd = np.ndarray.transpose( csvdict['spd_test_red.csv'].to_numpy() )
-cri = luxpy.color.cri.spd_to_cri(spd)
-print('CRI=', cri[0][0], 'for', 'spd_test_red.csv')
-
 cridict = {}
 
 for key in csvdict:
     spd = np.ndarray.transpose( csvdict[key].to_numpy() )
     cri = luxpy.color.cri.spd_to_cri(spd)
+    print('LuxPy calculations:')
     print('CRI=', cri[0][0], 'for', key)
-    cridict[key] = luxpy.color.cri.spd_to_cri(spd)[0][0]
+    cridict[key] = cri[0][0]
 
 print(cridict)
 
 # CRI calculation with colour-science package
 # =====================================================================
 
-#spd_dict = dict(zip(spd_dataframe['wavelength'],spd_dataframe['intensity']))
+altcridict = {}
 
-#spd = colour.SpectralDistribution(spd_dict)
-#cri = colour.colour_rendering_index(spd)
+for key in csvdict:
+    spd_dict = dict(zip(csvdict[key]['wavelength'], csvdict[key]['intensity']))
+    spd = colour.SpectralDistribution(spd_dict)
+    cri = colour.colour_rendering_index(spd)
+    print('Colour calculations:')
+    print('CRI=', cri, 'for', key)
+    altcridict[key] = cri
+
+print(cridict)
