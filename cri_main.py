@@ -9,6 +9,7 @@ import pandas as pd
 # File Handling
 import os   # For I/O and path handling
 import os.path  # For walking through directories
+import pickle # For saving dictionaries as files
 
 # Colour Science
 import colour
@@ -31,7 +32,6 @@ from matplotlib import pyplot as plt
 # =====================================================================
 
 cwd = os.getcwd()
-intestpath = '/data/input/test/'
 inpath = '/data/input/'
 outpath = '/data/output/'
 
@@ -40,7 +40,7 @@ outpath = '/data/output/'
 
 csvdict = {}
 
-for dirpath, dirname, filenames in os.walk(cwd+intestpath):
+for dirpath, dirname, filenames in os.walk(cwd+inpath):
 
     for file in filenames:
 
@@ -52,7 +52,7 @@ for dirpath, dirname, filenames in os.walk(cwd+intestpath):
 
         try:
             # Reads all files in the input folder
-            dataframe = pd.read_csv(cwd+intestpath+file,
+            dataframe = pd.read_csv(cwd+inpath+file,
                                     header=None,
                                     names=['wavelength', 'intensity'])
 
@@ -100,6 +100,14 @@ for key in csvdict:
         if y_beg > y_end:
             csvdict[key]['intensity'] = csvdict[key]['intensity'].apply(lambda y: y - y_end)
 
+# Writing SPDs to files
+# =====================================================================
+
+writeout = open('spd_export.pkl','wb')
+pickle.dump(csvdict,writeout)
+writeout.close()
+
+
 # CRI calculation with LuxPy package
 # =====================================================================
 
@@ -116,15 +124,15 @@ print(cridict)
 
 # CRI calculation with colour-science package
 # =====================================================================
-
-altcridict = {}
-
-for key in csvdict:
-    spd_dict = dict(zip(csvdict[key]['wavelength'], csvdict[key]['intensity']))
-    spd = colour.SpectralDistribution(spd_dict)
-    cri = colour.colour_rendering_index(spd)
-    print('Colour calculations:')
-    print('CRI=', cri, 'for', key)
-    altcridict[key] = cri
-
-print(cridict)
+#
+#altcridict = {}
+#
+#for key in csvdict:
+#    spd_dict = dict(zip(csvdict[key]['wavelength'], csvdict[key]['intensity']))
+#    spd = colour.SpectralDistribution(spd_dict)
+#    cri = colour.colour_rendering_index(spd)
+#    print('Colour calculations:')
+#    print('CRI=', cri, 'for', key)
+#    altcridict[key] = cri
+#
+#print(cridict)
