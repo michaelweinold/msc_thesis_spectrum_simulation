@@ -33,3 +33,5 @@ _This script was used to extract CRI data from publications dating to the early 
 
 - Check for large discontinuities in the provided SPD to avoid errors like `cri = nan`
 - Differences in CRI definitions between colour-science and luxpy
+
+#### https://www.colour-science.org/posts/about-rgb-colourspace-models-performance/
