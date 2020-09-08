@@ -2,7 +2,7 @@
 
 _This script was used to extract CRI data from publications dating to the early days of light-emitting diodes. This data was used to better understand the advancements of light-emitting diode technology. The research project was jointly undertaken by teams of the University of Minnesota, the University of Harvard and the University of Cambridge. It was [funded by the Alfred P. Sloan foundation](https://sloan.org/grant-detail/8567)._
 
-### CRI Calculation
+### CRI Computation
 
 | Package | Function | Input Type* | Default CRI Version | Documentation |
 | ------- | -------- | ----- | ----------- | ------------- |
@@ -27,11 +27,4 @@ _This script was used to extract CRI data from publications dating to the early 
 
 [`matplotlib.colors.ListedColormap()`](https://matplotlib.org/2.0.2/api/colors_api.html#matplotlib.colors.ListedColormap)
 
-`[](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.imshow.html#matplotlib-pyplot-imshow)
-
-#### Caveats
-
-- Check for large discontinuities in the provided SPD to avoid errors like `cri = nan`
-- Differences in CRI definitions between colour-science and luxpy
-
-#### https://www.colour-science.org/posts/about-rgb-colourspace-models-performance/
+[`matplotlib.pyplot.imshow`](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.imshow.html#matplotlib-pyplot-imshow)
