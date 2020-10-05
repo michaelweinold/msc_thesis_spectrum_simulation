@@ -12,11 +12,17 @@ _This script was used to extract CRI data from publications dating to the early 
 \*Assuming a SPD with of A discrete data tuples \
 \**Note that as of version 1.X.X. the `luxpy.spectrum.spd` function does _not_ return the spectrum in the correct format when reading from a Pandas DataFrame or another array like structure.
 
-### CRI Simulation
+### CRI Illumination Simulation
 
- Package | Function | Input Type* | Default CRI Version | Documentation |
+| Package | Function | Input Type* | Default CRI Version | Documentation |
 | ------- | -------- | ----- | ----------- | ------------- |
 | [luxpy 1.4.14.](https://github.com/ksmet1977/luxpy) | [`luxpy.toolboxes.hypspcim.hyperspectral_img_simulator`](https://ksmet1977.github.io/luxpy/build/html/_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html) | `ndarray`, dim=(Ax2)** | [IES-TM30](https://web.archive.org/web/20191220085010/https://www.ies.org/product/ies-method-for-evaluating-light-source-color-rendition/) |[readthedocs.io](https://ksmet1977.github.io/luxpy/build/html/index.html) |
+
+### Luminous Efficacy Computation
+
+| Package | Function | Source | Documentation |
+| ------ | -------- | ------ | ------------- |
+| [colour-science 0.3.14](https://www.colour-science.org/) | [`colour.luminous_efficacy`](https://www.colour-science.org/) | [Source](https://colour.readthedocs.io/en/latest/_modules/colour/colorimetry/photometry.html#luminous_efficacy) | [readthedocs.io](https://colour.readthedocs.io/en/latest/index.html) |
 
 ### CCT Gradient Rendering
 
