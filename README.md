@@ -16,13 +16,16 @@ _This script was used to extract CRI data from publications dating to the early 
 
 | Package | Function | Input Type* | Default CRI Version | Documentation |
 | ------- | -------- | ----- | ----------- | ------------- |
-| [luxpy 1.4.14.](https://github.com/ksmet1977/luxpy) | [`luxpy.toolboxes.hypspcim.hyperspectral_img_simulator`](https://ksmet1977.github.io/luxpy/build/html/_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html) | `ndarray`, dim=(Ax2)** | [IES-TM30](https://web.archive.org/web/20191220085010/https://www.ies.org/product/ies-method-for-evaluating-light-source-color-rendition/) |[readthedocs.io](https://ksmet1977.github.io/luxpy/build/html/index.html) |
+| [luxpy 1.4.14.](https://github.com/ksmet1977/luxpy) | [`luxpy.toolboxes.hypspcim.hyperspectral_img_simulator`](https://ksmet1977.github.io/luxpy/build/html/_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html) | `ndarray`, dim=(Ax2)** | [IES-TM30](https://web.archive.org/web/20191220085010/https://www.ies.org/product/ies-method-for-evaluating-light-source-color-rendition/) |[readthedocs.io](https://ksmet1977.github.io/luxpy/build/html/toolboxes.html#hypspcim) |
+
+[List of CIE standard illuminants in the luxpy source code](https://github.com/ksmet1977/luxpy/blob/master/luxpy/spectrum/basics/spectral_databases.py) \
+[List of CIE standard illuminants on Wikipedia](https://en.wikipedia.org/wiki/Standard_illuminant)
 
 ### Luminous Efficacy Computation
 
 | Package | Function | Source | Documentation |
 | ------ | -------- | ------ | ------------- |
-| [colour-science 0.3.14](https://www.colour-science.org/) | [`colour.luminous_efficacy`](https://www.colour-science.org/) | [Source](https://colour.readthedocs.io/en/latest/_modules/colour/colorimetry/photometry.html#luminous_efficacy) | [readthedocs.io](https://colour.readthedocs.io/en/latest/index.html) |
+| [colour-science 0.3.14](https://www.colour-science.org/) | [`colour.luminous_efficacy`](https://www.colour-science.org/) | [Source](https://colour.readthedocs.io/en/latest/_modules/colour/colorimetry/photometry.html#luminous_efficacy) | [readthedocs.io](https://ksmet1977.github.io/luxpy/build/html/index.html) |
 
 ### Color Temperature (CCT) Computation
 
