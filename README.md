@@ -24,6 +24,15 @@ _This script was used to extract CRI data from publications dating to the early 
 | ------ | -------- | ------ | ------------- |
 | [colour-science 0.3.14](https://www.colour-science.org/) | [`colour.luminous_efficacy`](https://www.colour-science.org/) | [Source](https://colour.readthedocs.io/en/latest/_modules/colour/colorimetry/photometry.html#luminous_efficacy) | [readthedocs.io](https://colour.readthedocs.io/en/latest/index.html) |
 
+### Color Temperature (CCT) Computation
+
+| Package | Function | Source | Documentation |
+| ------ | -------- | ------ | ------------- |
+| [colour-science 0.3.14](https://www.colour-science.org/) | [`xy_to_CCT`](https://colour.readthedocs.io/en/latest/colour.temperature.html?highlight=color%20temperature#correlated-colour-temperature) | [Source](https://colour.readthedocs.io/en/latest/_modules/colour/temperature.html#xy_to_CCT) | [readthedocs.io](https://colour.readthedocs.io/en/latest/index.html) |
+1667, CCT > 25000
+
+Note: Limitations on max. CCT [K] apply, depending on method used. Method [*Kang (2002)*](https://github.com/michaelweinold/colour/blob/develop/colour/temperature/kang2002.py): 1,667<CCT<25,000K.   [Method *CIE D*](https://github.com/michaelweinold/colour/blob/develop/colour/temperature/cie_d.py): 4,000<CCT<25,000K.
+
 ### CCT Gradient Rendering
 
 [`luxpy.color.cct.cct_to_xyz`](https://ksmet1977.github.io/luxpy/build/html/color.html?highlight=color%20temperature#luxpy.color.cct.cct_to_xyz)
