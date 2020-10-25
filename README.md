@@ -28,7 +28,7 @@ _This script was used to extract CRI data from publications dating to the early 
 
 | Package | Function | Source | Documentation |
 | ------ | -------- | ------ | ------------- |
-| [colour-science 0.3.14](https://www.colour-science.org/) | [`xy_to_CCT`](https://colour.readthedocs.io/en/latest/colour.temperature.html?highlight=color%20temperature#correlated-colour-temperature) | [Source](https://colour.readthedocs.io/en/latest/_modules/colour/temperature.html#xy_to_CCT) | [readthedocs.io](https://colour.readthedocs.io/en/latest/index.html) |
+| [colour-science 0.3.14](https://www.colour-science.org/) | [`xy_to_CCT` or `colour.temperature.xy_to_CCT_Kang2002(xy)`](https://colour.readthedocs.io/en/latest/colour.temperature.html?highlight=color%20temperature#correlated-colour-temperature) | [Source](https://colour.readthedocs.io/en/latest/_modules/colour/temperature.html#xy_to_CCT) | [readthedocs.io](https://colour.readthedocs.io/en/latest/index.html) |
 
 Note: Limitations on max. CCT [K] apply, depending on method used. \
 [Method *Kang (2002)*](https://github.com/michaelweinold/colour/blob/develop/colour/temperature/kang2002.py): 1,667<CCT<25,000K. \
